@@ -64,6 +64,13 @@ class GameSocket:
          print("Example: a0,a1")
          print("The game initiator is player red")
 
+
+    def windows_input_loop(self):
+        while True:
+            self.receive()
+            request = input(">>>")
+            self.send(request)
+
     def run_input_loop(self):
         while self.connection:
 
@@ -71,21 +78,28 @@ class GameSocket:
             For the idea of how to get around the blocking input call by including stdin in reads fd list
             Author: Pontus
             URL : https://stackoverflow.com/questions/1335507/keyboard-input-with-timeout
+        
+            tested this out on windows and found that 
+            the windows version of select is winsockets based and is unable
+            to handle file descriptors within select
+            needed to make a windows specific version
             """
+            if sys.platform == 'win32' or sys.platform == 'cygwin':
+                self.winsocks_input_loop()
+            else:
+                reads = [self.connection, sys.stdin]
+                writes = [self.connection, sys.stdout]
+                execs = []
             
-            reads = [self.connection, sys.stdin]
-            writes = [self.connection, sys.stdout]
-            execs = []
-            
-            reads, writes, execs = select.select(reads, writes, execs, 10)
-            if reads:
-                if self.connection in reads and sys.stdout in writes:
-                    self.receive()
+                reads, writes, execs = select.select(reads, writes, execs, 10)
+                if reads:
+                    if self.connection in reads and sys.stdout in writes:
+                        self.receive()
                 
-            if writes:
-                if sys.stdin in reads:
-                    request = input("")
-                    self.send(request)
+                if writes:
+                    if sys.stdin in reads:
+                        request = input("")
+                        self.send(request)
                     
 
     def prompt(self):
