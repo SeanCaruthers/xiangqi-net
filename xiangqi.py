@@ -17,9 +17,21 @@ UNFINISHED = 'UNFINISHED'
 RED_VICTORY = 'RED_WON'
 BLUE_VICTORY = 'BLUE_WON'
 CAPTURED = 'CAPTURED'
-red = "\u001b[31m"
-blue = "\u001b[36m"
-white = "\u001b[37m"
+import sys
+
+# very hacky way of getting colors to work on windows (no ANSI)
+# workaround found at
+# stackoverflow.com/questions/287871/how-to-print-colored-text-to-terminal
+if sys.platform == 'win32' or sys.platform =='cygwin':
+    import os
+    os.system("")
+    red = "\033[31m"
+    blue = "\033[36m"
+    white = "\033[37m"
+else:
+    red = "\u001b[31m"
+    blue = "\u001b[36m"
+    white = "\u001b[37m"
 
 
 def convert_vector(vector, start):
@@ -779,7 +791,7 @@ class Piece:
         if self.get_owner().get_name() == RED:
             return red + self.character + white
         else:
-            return blue +  self.character + white
+            return blue + self.character + white
 
 
 class General(Piece):
@@ -789,7 +801,10 @@ class General(Piece):
         """Our class constructor"""
         super().__init__(*args)
         self._name = GENERAL
-        self.character =  "\u265A"
+        if sys.platform == 'win32' or sys.platform =='cygwin':
+            self.character = "G"
+        else:
+            self.character =  "\u265A"
 
         # valid spots that the general can move within
         self._spaces = self.get_owner().get_castle()
@@ -807,7 +822,10 @@ class Adviser(Piece):
         """Our class constructor"""
         super().__init__(*args)
         self._name = ADVISER
-        self.character =  "\u265D"
+        if sys.platform == 'win32' or sys.platform =='cygwin':
+            self.character = "A"
+        else:
+            self.character =  "\u265D"
         
 
         # valid spots that the adviser can move within
@@ -824,7 +842,10 @@ class Elephant(Piece):
         """Our class constructor"""
         super().__init__(*args)
         self._name = ELEPHANT
-        self.character =  "\u252B"
+        if sys.platform == 'win32' or sys.platform =='cygwin':
+            self.character = "E"
+        else:
+            self.character =  "\u252B"
 
         # spaces that could block our elephant
         self._blocks = [(1, 1), (1, -1), (-1, -1), (-1, 1)]
@@ -843,7 +864,10 @@ class Horse(Piece):
         """Our class constructor"""
         super().__init__(*args)
         self._name = HORSE
-        self.character =  "\u265E"
+        if sys.platform == 'win32' or sys.platform =='cygwin':
+            self.character = "G"
+        else:
+            self.character =  "H"
 
         # spaces that could block our horse
         self._blocks = [(1, 0), (-1, 0), (0, 1), (0, -1)]
@@ -860,7 +884,10 @@ class Chariot(Piece):
         """Our class constructor"""
         super().__init__(*args)
         self._name = CHARIOT
-        self.character =  "\u265C"
+        if sys.platform == 'win32' or sys.platform =='cygwin':
+            self.character = "R"
+        else:
+            self.character =  "\u265C"
 
         # valid spots that the chariot can move within
         self._spaces = self.get_owner().get_board()
@@ -877,7 +904,10 @@ class Cannon(Piece):
         """Our class constructor"""
         super().__init__(*args)
         self._name = CANNON
-        self.character =  "\u25CE"
+        if sys.platform == 'win32' or sys.platform =='cygwin':
+            self.character = "C"
+        else:
+            self.character =  "\u25CE"
         
 
         # our cannon's valid moves
@@ -892,7 +922,10 @@ class Soldier(Piece):
         """Our class constructor"""
         super().__init__(*args)
         self._name = SOLDIER
-        self.character =  "\u265F"
+        if sys.platform == 'win32' or sys.platform =='cygwin':
+            self.character = "S"
+        else:
+            self.character =  "\u265F"
 
         # ensure that the soldiers are moving in the correct direction
         if self.get_owner().get_name() == RED:

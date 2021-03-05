@@ -50,26 +50,61 @@ class GameSocket:
         sys.exit()
 
     def print_help(self):
-         print("Welcome to Xiangqi central.")
-         print("To learn how to play visit")
-         print("https://en.wikipedia.org/wiki/Xiangqi")
-         print("General   = \u265A")
-         print("Adviser   = \u265D")
-         print("Elephant  = \u252B")
-         print("Horse     = \u265E")
-         print("Chariot   = \u265C")
-         print("Cannon    = \u25CE")
-         print("Soldier   = \u265F")
-         print("\n\n Enter commands as coordinates delimited by a comma")
-         print("Example: a0,a1")
-         print("The game initiator is player red")
+        if sys.platform == 'win32' or sys.platform == 'cygwin':
+            print("Welcome to Xiangqi central.")
+            print("To learn how to play visit")
+            print("https://en.wikipedia.org/wiki/Xiangqi")
+            print("General   = G")
+            print("Adviser   = A")
+            print("Elephant  = E")
+            print("Horse     = H")
+            print("Chariot   = R")
+            print("Cannon    = C")
+            print("Soldier   = S")
+            print("\n\n Enter commands as coordinates delimited by a comma")
+            print("Example: a0,a1")
+            print("The game initiator is player red")
+
+        else:
+            print("Welcome to Xiangqi central.")
+            print("To learn how to play visit")
+            print("https://en.wikipedia.org/wiki/Xiangqi")
+            print("General   = \u265A")
+            print("Adviser   = \u265D")
+            print("Elephant  = \u252B")
+            print("Horse     = \u265E")
+            print("Chariot   = \u265C")
+            print("Cannon    = \u25CE")
+            print("Soldier   = \u265F")
+            print("\n\n Enter commands as coordinates delimited by a comma")
+            print("Example: a0,a1")
+            print("The game initiator is player red")
 
 
-    def windows_input_loop(self):
+    def send_cycle(self):
         while True:
-            self.receive()
             request = input(">>>")
             self.send(request)
+
+    def receive_cycle(self):
+        while True:
+            self.receive()
+
+    def winsocks_input_loop(self):
+        import threading
+
+        # since select does not work on windows
+        # needed to implement via some basic threads
+        reader = threading.Thread(target=self.receive_cycle)
+        writer = threading.Thread(target=self.send_cycle)
+        try:
+            reader.start()
+            writer.start()
+            reader.join()
+            writer.join()
+        except:
+            sys.exit()
+                
 
     def run_input_loop(self):
         while self.connection:
@@ -84,6 +119,7 @@ class GameSocket:
             to handle file descriptors within select
             needed to make a windows specific version
             """
+        
             if sys.platform == 'win32' or sys.platform == 'cygwin':
                 self.winsocks_input_loop()
             else:
