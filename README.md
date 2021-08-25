@@ -1,4 +1,5 @@
 
+![xiangi](https://user-images.githubusercontent.com/20529369/130867393-6abf53bc-7ee9-40cc-bd85-03ce73efda92.gif)
 
 
 <dl>
@@ -7,6 +8,7 @@
     <dt>Date</dt>
     <dd>10/25/20</dt>
     <dt>Description</dt>
+    <dd>A two way chat with built in Xiangqi game created using Python and sockets.</dd>
     <dt>Run instructions</dt>
     <dd>
         <ul>
